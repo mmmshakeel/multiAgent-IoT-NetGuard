@@ -5,5 +5,5 @@ public class MonitoringAgent extends BaseAgent {
         // Add monitoring behaviors
     }
 
-    // Define monitoring methods
+    // Monitoring the jade network
 }
