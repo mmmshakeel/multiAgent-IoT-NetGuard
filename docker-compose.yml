@@ -1,0 +1,14 @@
+services:
+  flask:
+    container_name: predict-service-nb-model
+    build: ./flask
+    ports:
+      - "5002:5002"
+#    volumes:
+#      - ./flask:/app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
