@@ -15,7 +15,7 @@ models = [joblib.load(f'{models_directory}naive_bayes_model_{i}.joblib') for i i
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
-    data = json.loads(data['data'])
+    data = data['data']
 
     # Reshape if just one sample
     features = np.array(data['features']).reshape(1, -1)
@@ -26,7 +26,7 @@ def predict():
     # Apply majority voting
     majority_vote = stats.mode(predictions, axis=0)
 
-    return jsonify({'prediction': str(majority_vote.mode[0])})
+    return str(majority_vote.mode[0])
 
 if __name__ == '__main__':
     app.run(debug=True)
