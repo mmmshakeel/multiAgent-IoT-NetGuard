@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, jsonify
 import numpy as np
 import joblib
@@ -13,7 +15,10 @@ models = [joblib.load(f'{models_directory}naive_bayes_model_{i}.joblib') for i i
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
-    features = np.array(data['features']).reshape(1, -1)  # Reshape if just one sample
+    data = json.loads(data['data'])
+
+    # Reshape if just one sample
+    features = np.array(data['features']).reshape(1, -1)
 
     # Collect predictions from each model
     predictions = np.array([model.predict(features) for model in models])
@@ -21,7 +26,7 @@ def predict():
     # Apply majority voting
     majority_vote = stats.mode(predictions, axis=0)
 
-    return jsonify({'prediction': int(majority_vote)})
+    return jsonify({'prediction': str(majority_vote.mode[0])})
 
 if __name__ == '__main__':
     app.run(debug=True)
