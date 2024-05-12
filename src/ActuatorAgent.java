@@ -15,7 +15,7 @@ public class ActuatorAgent extends BaseAgent {
                     if (msg != null) {
                         String msgContent = msg.getContent();
                         if (msgContent.equals("DDOS_DETECTED")) {
-                            System.out.println("Update datastore with DDoS event");
+                            updateDataStore();
                         }
                     }
                 } catch (Exception e) {
@@ -27,5 +27,11 @@ public class ActuatorAgent extends BaseAgent {
         });
     }
 
+    /**
+     * Todo: Update this function to update a datastore (MySQL database)
+     */
+    private void updateDataStore() {
+        System.out.println("Update datastore with DDoS event");
+    }
     // Methods to update the data store
 }

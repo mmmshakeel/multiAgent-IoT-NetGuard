@@ -1,3 +1,4 @@
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
@@ -10,11 +11,16 @@ public class CommunicationAgent extends BaseAgent {
             @Override
             public void action() {
                 ACLMessage msg = receive();
-                String msgContent = msg.getContent();
 
                 if (msg != null) {
+                    String msgContent = msg.getContent();
                     if (msgContent.equals("DDOS_DETECTED")) {
-                        System.out.println("Block network traffic command for network routers");
+                        notifyActuatorAgent();
+                        notifyNetworkRouters();
+                    }
+
+                    if (msgContent.equals("NETWORK_UNHEALTHY")) {
+                        notifyNetworkRouters();
                     }
                 }
 
@@ -23,5 +29,16 @@ public class CommunicationAgent extends BaseAgent {
         });
     }
 
+    private void notifyActuatorAgent() {
+        // Todo: Update the message to a template
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.addReceiver(new AID("ActuatorAgent", AID.ISLOCALNAME));
+        msg.setContent("DDOS_DETECTED");
+        send(msg);
+    }
+
+    private void notifyNetworkRouters() {
+        System.out.println("Block network traffic command for network routers");
+    }
     // Methods to send commands to network hardware
 }
