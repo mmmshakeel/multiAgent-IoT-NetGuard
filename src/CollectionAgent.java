@@ -19,23 +19,15 @@ public class CollectionAgent extends BaseAgent {
             public void action() {
 
                 try {
+
                     String networkEventData = listenToTraffic();
                     HttpResponse<String> response = useMlModel(networkEventData);
 
-                    if (response.statusCode() == 200) {
-                        String prediction = response.body();
-                        prediction = prediction.replace("[", "").replace("]", "").replace("'", "").trim();
+                    assert response != null;
+                    if (isDDoSDetected(response)) {
+                        System.out.println("DDoS Detected. Inform Communication agent");
 
-                        if (prediction.equals("DDoS")) {
-
-                            System.out.println("DDoS Detected. Inform Communication agent");
-
-                            // Todo: Update the message to a template
-                            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                            msg.addReceiver(new AID("CommunicationAgent", AID.ISLOCALNAME));
-                            msg.setContent("DDOS_DETECTED");
-                            send(msg);
-                        }
+                        notifyCommunicationAgent();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -49,7 +41,7 @@ public class CollectionAgent extends BaseAgent {
     /**
      * Todo: Update function to read from event datastore
      * Returns a hard coded network event for a DDoS scenarios
-     * @return
+     * @return String - Network event record from an event datastore
      */
     private String listenToTraffic() {
         return "{\"data\": {\"features\":[83007316.82262105, 1885.4, 180.72, 177.3948932388561, 0.0, 0.0, 20.52, 180.72, 156.4, 16.89, 16.883240031949594, 16.883240031949594, 10.79298722812946, 328.3251870229355, 0.02, 0.01, 65.73, 141.55, 7.624943986471866, 0.0, 0.19, 0.0, 9.5, 1.0, 0.0, 0.0]}}";
@@ -74,6 +66,24 @@ public class CollectionAgent extends BaseAgent {
         return null;
     }
 
+    private boolean isDDoSDetected(HttpResponse<String> response) {
+        if (response.statusCode() == 200) {
+            String prediction = response.body();
+            prediction = prediction.replace("[", "").replace("]", "").replace("'", "").trim();
+
+            return prediction.equals("DDoS");
+        }
+
+        return false;
+    }
+
+    private void notifyCommunicationAgent() {
+        // Todo: Update the message to a template
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.addReceiver(new AID("CommunicationAgent", AID.ISLOCALNAME));
+        msg.setContent("DDOS_DETECTED");
+        send(msg);
+    }
     // Listens to the network traffic and utilises the ML model to determine the network behaviour
 }
 
