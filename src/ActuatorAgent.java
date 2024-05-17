@@ -2,6 +2,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
 public class ActuatorAgent extends BaseAgent {
+    private String[] databaseConnectionConfig;
+
     @Override
     protected void setup() {
         super.setup();

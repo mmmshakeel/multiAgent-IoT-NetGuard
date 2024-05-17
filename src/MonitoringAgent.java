@@ -5,6 +5,8 @@ import jade.lang.acl.ACLMessage;
 import java.util.Random;
 
 public class MonitoringAgent extends BaseAgent {
+    private String networkPort;
+
     @Override
     protected void setup() {
         super.setup();

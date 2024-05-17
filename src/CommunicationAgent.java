@@ -3,6 +3,9 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
 public class CommunicationAgent extends BaseAgent {
+    private String agentName = "ActuatorAgent";
+    private String[] networkRouters;
+
     @Override
     protected void setup() {
         super.setup();
@@ -32,7 +35,7 @@ public class CommunicationAgent extends BaseAgent {
     private void notifyActuatorAgent() {
         // Todo: Update the message to a template
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.addReceiver(new AID("ActuatorAgent", AID.ISLOCALNAME));
+        msg.addReceiver(new AID(agentName, AID.ISLOCALNAME));
         msg.setContent("DDOS_DETECTED");
         send(msg);
     }
