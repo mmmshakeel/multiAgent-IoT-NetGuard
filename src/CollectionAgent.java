@@ -20,9 +20,7 @@ public class CollectionAgent extends BaseAgent {
         addBehaviour(new CyclicBehaviour() {
             @Override
             public void action() {
-
                 try {
-
                     networkEvents = listenToTraffic();
                     HttpResponse<String> response = useMlModel(networkEvents);
 
