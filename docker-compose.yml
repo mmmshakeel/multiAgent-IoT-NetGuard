@@ -3,7 +3,7 @@ services:
     container_name: predict-service-nb-model
     build: ./flask
     ports:
-      - "5002:5002"
+      - "5002:5000"
 #    volumes:
 #      - ./flask:/app
     networks:
