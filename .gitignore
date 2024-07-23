@@ -1,29 +1,24 @@
-### IntelliJ IDEA ###
+# Ignore compiled class files
+*.class
+
+# Ignore other files and directories that should not be in version control
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+
+# Ignore build directories
+build/
+target/
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
+# Ignore IDE-specific files
+*.iml
+.idea/
 .vscode/
 
-### Mac OS ###
+# Ignore OS-specific files
 .DS_Store
+Thumbs.db
