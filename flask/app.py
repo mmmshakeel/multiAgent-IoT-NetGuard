@@ -1,5 +1,6 @@
 import joblib
 import numpy as np
+import pandas as pd
 from scipy import stats
 
 from flask import Flask, request
@@ -23,9 +24,10 @@ def predict():
     predictions = np.array([model.predict(features) for model in models])
 
     # Apply majority voting
-    majority_vote = stats.mode(predictions, axis=0)
+    df = pd.DataFrame(predictions)
+    majority_vote = df.mode().values[0]
 
-    return str(majority_vote.mode[0])
+    return str(majority_vote)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)

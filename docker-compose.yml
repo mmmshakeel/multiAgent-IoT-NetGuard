@@ -4,11 +4,17 @@ services:
     build: ./flask
     ports:
       - "5002:5000"
-#    volumes:
-#      - ./flask:/app
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+  jade:
+    container_name: jade-mas-ids
+    build: .
+    ports:
+      - "1099:1099"
+    volumes:
+      - .:/app
+    environment:
+      - NAME=World
+    command: >
+      /bin/sh -c "javac -d classes /app/src/*.java && 
+      java -cp /app/lib/jade.jar:classes jade.Boot -agents 'CollectionAgent:CollectionAgent;CommunicationAgent:CommunicationAgent;ActuatorAgent:ActuatorAgent;MonitoringAgent:MonitoringAgent'"
+

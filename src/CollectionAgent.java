@@ -10,7 +10,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
 public class CollectionAgent extends BaseAgent {
-    private String predictionServiceUrl = "http://127.0.0.1:5000/predict";
+    private String predictionServiceUrl = "http://predict-service-nb-model:5000/predict";
     private String networkEvents = "";
 
     @Override
