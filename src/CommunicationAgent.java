@@ -18,11 +18,25 @@ public class CommunicationAgent extends BaseAgent {
                 if (msg != null) {
                     String msgContent = msg.getContent();
                     if (msgContent.equals("DDOS_DETECTED")) {
+
+                        System.out.println("");
+                        System.out.println("===========");
+                        System.out.println("DDOS DETECTED!");
+                        System.out.println("===========");
+                        System.out.println("");
+
                         notifyActuatorAgent();
                         notifyNetworkRouters();
                     }
 
                     if (msgContent.equals("NETWORK_UNHEALTHY")) {
+
+                        System.out.println("");
+                        System.out.println("===========");
+                        System.out.println("NETWORK UNHEALTHY");
+                        System.out.println("===========");
+                        System.out.println("");
+
                         notifyNetworkRouters();
                     }
                 }
