@@ -4,3 +4,6 @@ scipy
 joblib
 scikit-learn
 pandas
+
+# javac -cp lib/jade.jar:lib/commons-csv-1.9.0.jar:lib/json-20210307.jar -d classes src/*.java &&
+#java -cp lib/jade.jar:lib/commons-csv-1.9.0.jar:lib/json-20210307.jar:classes jade.Boot -agents 'CollectionAgent:CollectionAgent;CommunicationAgent:CommunicationAgent;ActuatorAgent:ActuatorAgent;MonitoringAgent:MonitoringAgent'
