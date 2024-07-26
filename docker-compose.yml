@@ -16,3 +16,28 @@ services:
     command: >
       /bin/sh -c "javac -cp /app/lib/jade.jar:/app/lib/commons-csv-1.9.0.jar:/app/lib/json-20210307.jar -d classes /app/src/*.java &&
       java -cp /app/lib/jade.jar:/app/lib/commons-csv-1.9.0.jar:/app/lib/json-20210307.jar:classes jade.Boot -agents 'CollectionAgent:CollectionAgent;CommunicationAgent:CommunicationAgent;ActuatorAgent:ActuatorAgent;MonitoringAgent:MonitoringAgent'"
+
+  event-store-service:
+    build: ./event-store-service
+    container_name: event-store-service
+    ports:
+      - "8080:80"
+    volumes:
+      - ./event-store-service:/var/www/html
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    container_name: events_store_db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
