@@ -13,6 +13,7 @@ services:
     volumes:
       - .:/app
       - /home/ubuntu/msc_project/mininet-IoT-simulation/data/generated_traffic.csv:/app/data/generated_traffic.csv
+#      - /Users/shakeelmohamed/workspace/MSc/mininetSimulation/data/generated_traffic.csv:/app/data/generated_traffic.csv
     command: >
       /bin/sh -c "javac -cp /app/lib/jade.jar:/app/lib/commons-csv-1.9.0.jar:/app/lib/json-20210307.jar -d classes /app/src/*.java &&
       java -cp /app/lib/jade.jar:/app/lib/commons-csv-1.9.0.jar:/app/lib/json-20210307.jar:classes jade.Boot -agents 'CollectionAgent:CollectionAgent;CommunicationAgent:CommunicationAgent;ActuatorAgent:ActuatorAgent;MonitoringAgent:MonitoringAgent'"

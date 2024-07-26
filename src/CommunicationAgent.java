@@ -14,14 +14,17 @@ public class CommunicationAgent extends BaseAgent {
             @Override
             public void action() {
                 ACLMessage msg = receive();
+                Message message = getMessageFromAgent(msg);
 
                 if (msg != null) {
-                    String msgContent = msg.getContent();
-                    if (msgContent.equals("DDOS_DETECTED")) {
+
+                    if (message.getMsgFlag().equals("DDOS_DETECTED")) {
+                        String eventString = message.getMsgContent();
 
                         System.out.println("");
                         System.out.println("===========");
                         System.out.println("DDOS DETECTED!");
+                        System.out.println(eventString);
                         System.out.println("===========");
                         System.out.println("");
 
@@ -29,7 +32,7 @@ public class CommunicationAgent extends BaseAgent {
                         notifyNetworkRouters();
                     }
 
-                    if (msgContent.equals("NETWORK_UNHEALTHY")) {
+                    if (message.getMsgFlag().equals("NETWORK_UNHEALTHY")) {
 
                         System.out.println("");
                         System.out.println("===========");
@@ -47,7 +50,6 @@ public class CommunicationAgent extends BaseAgent {
     }
 
     private void notifyActuatorAgent() {
-        // Todo: Update the message to a template
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         msg.addReceiver(new AID(agentName, AID.ISLOCALNAME));
         msg.setContent("DDOS_DETECTED");

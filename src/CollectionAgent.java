@@ -1,6 +1,4 @@
-import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.lang.acl.ACLMessage;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -20,6 +18,9 @@ import java.util.List;
 public class CollectionAgent extends BaseAgent {
     private String predictionServiceUrl = "http://predict-service-nb-model:5000/predict";
     private String csvFilePath = "/app/data/generated_traffic.csv";
+//    private String predictionServiceUrl = "http://127.0.0.1:5002/predict";
+//    private String csvFilePath = "/Users/shakeelmohamed/workspace/MSc/mininetSimulation/data/generated_traffic.csv";
+
 
     @Override
     protected void setup() {
@@ -30,13 +31,20 @@ public class CollectionAgent extends BaseAgent {
             public void action() {
                 try {
                     JSONArray networkEvents = listenToTraffic();
-                    HttpResponse<String> response = useMlModel(networkEvents);
 
-                    assert response != null;
-                    if (isDDoSDetected(response)) {
-                        System.out.println("DDoS Detected. Inform Communication agent");
+                    for (int i = 0; i < networkEvents.length(); i++) {
+                        JSONObject event = networkEvents.getJSONObject(i);
 
-                        notifyCommunicationAgent();
+                        HttpResponse<String> response = useMlModel(event);
+
+                        assert response != null;
+                        if (isDDoSDetected(response)) {
+                            System.out.println("DDoS Detected. Inform Communication agent");
+
+                            notifyCommunicationAgent(event);
+                        }
+
+                        block(5000);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -47,7 +55,7 @@ public class CollectionAgent extends BaseAgent {
         });
     }
 
-    private JSONArray listenToTraffic() throws IOException {
+    private JSONArray listenToTraffic() {
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath))) {
             CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
             List<CSVRecord> batch = new ArrayList<>();
@@ -95,23 +103,19 @@ public class CollectionAgent extends BaseAgent {
         return json;
     }
 
-    private HttpResponse<String> useMlModel(JSONArray networkEventData) {
+    private HttpResponse<String> useMlModel(JSONObject event) {
         HttpClient client = HttpClient.newHttpClient();
 
-        for (int i = 0; i < networkEventData.length(); i++) {
-            JSONObject event = networkEventData.getJSONObject(i);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(predictionServiceUrl))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(event.toString()))
+                .build();
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(predictionServiceUrl))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(event.toString()))
-                    .build();
-
-            try {
-                return client.send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -127,10 +131,8 @@ public class CollectionAgent extends BaseAgent {
         return false;
     }
 
-    private void notifyCommunicationAgent() {
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.addReceiver(new AID("CommunicationAgent", AID.ISLOCALNAME));
-        msg.setContent("DDOS_DETECTED");
-        send(msg);
+    private void notifyCommunicationAgent(JSONObject event) {
+        String eventString = event.toString();
+        sendMessageToAgent("CommunicationAgent", "DDOS_DETECTED", eventString);
     }
 }
