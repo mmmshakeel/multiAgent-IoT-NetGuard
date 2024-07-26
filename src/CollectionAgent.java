@@ -41,7 +41,7 @@ public class CollectionAgent extends BaseAgent {
                         if (isDDoSDetected(response)) {
                             System.out.println("DDoS Detected. Inform Communication agent");
 
-                            notifyCommunicationAgent(event);
+                            notifyCommunicationAgent(event.getJSONArray("features"));
                         }
 
                         block(5000);
@@ -99,13 +99,14 @@ public class CollectionAgent extends BaseAgent {
             features.put(Double.parseDouble(value));
         }
 
-        json.put("data", new JSONObject().put("features", features));
+        json.put("features", features);
         return json;
     }
 
     private HttpResponse<String> useMlModel(JSONObject event) {
         HttpClient client = HttpClient.newHttpClient();
 
+        System.out.println(event);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(predictionServiceUrl))
                 .header("Content-Type", "application/json")
@@ -131,8 +132,7 @@ public class CollectionAgent extends BaseAgent {
         return false;
     }
 
-    private void notifyCommunicationAgent(JSONObject event) {
-        String eventString = event.toString();
-        sendMessageToAgent("CommunicationAgent", "DDOS_DETECTED", eventString);
+    private void notifyCommunicationAgent(JSONArray features) {
+        sendMessageToAgent("CommunicationAgent", "DDOS_DETECTED", features);
     }
 }

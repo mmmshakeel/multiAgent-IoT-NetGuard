@@ -15,7 +15,6 @@ models = [joblib.load(f'{models_directory}naive_bayes_model_{i}.joblib') for i i
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
-    data = data['data']
 
     # Reshape if just one sample
     features = np.array(data['features']).reshape(1, -1)

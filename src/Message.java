@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
     private String msgFlag;
-    private String msgContent;
+    private JSONObject msgContent;
 
-    public Message(String msgFlag, String msgContent) {
+    public Message(String msgFlag, JSONObject msgContent) {
         this.msgFlag = msgFlag;
         this.msgContent = msgContent;
     }
@@ -19,11 +19,11 @@ public class Message implements Serializable {
         this.msgFlag = msgFlag;
     }
 
-    public String getMsgContent() {
+    public JSONObject getMsgContent() {
         return msgContent;
     }
 
-    public void setMsgContent(String msgContent) {
+    public void setMsgContent(JSONObject msgContent) {
         this.msgContent = msgContent;
     }
 
@@ -35,6 +35,6 @@ public class Message implements Serializable {
     }
 
     public static Message fromJson(JSONObject json) {
-        return new Message(json.getString("msgFlag"), json.getString("msgContent"));
+        return new Message(json.getString("msgFlag"), json.getJSONObject("msgContent"));
     }
 }

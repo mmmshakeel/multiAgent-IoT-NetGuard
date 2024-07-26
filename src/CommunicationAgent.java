@@ -1,9 +1,9 @@
-import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class CommunicationAgent extends BaseAgent {
-    private String agentName = "ActuatorAgent";
     private String[] networkRouters;
 
     @Override
@@ -14,33 +14,34 @@ public class CommunicationAgent extends BaseAgent {
             @Override
             public void action() {
                 ACLMessage msg = receive();
-                Message message = getMessageFromAgent(msg);
 
                 if (msg != null) {
+                    Message message = getMessageFromAgent(msg);
+                    if (message != null) {
+                        if (message.getMsgFlag().equals("DDOS_DETECTED")) {
+                            JSONObject eventContent = message.getMsgContent();
 
-                    if (message.getMsgFlag().equals("DDOS_DETECTED")) {
-                        String eventString = message.getMsgContent();
+                            System.out.println("");
+                            System.out.println("===========");
+                            System.out.println("DDOS DETECTED!");
+                            System.out.println(eventContent.toString());
+                            System.out.println("===========");
+                            System.out.println("");
 
-                        System.out.println("");
-                        System.out.println("===========");
-                        System.out.println("DDOS DETECTED!");
-                        System.out.println(eventString);
-                        System.out.println("===========");
-                        System.out.println("");
+                            notifyActuatorAgent(eventContent.getJSONArray("data"));
+                            notifyNetworkRouters("DDOS");
+                        }
 
-                        notifyActuatorAgent();
-                        notifyNetworkRouters();
-                    }
+                        if (message.getMsgFlag().equals("NETWORK_UNHEALTHY")) {
 
-                    if (message.getMsgFlag().equals("NETWORK_UNHEALTHY")) {
+                            System.out.println("");
+                            System.out.println("===========");
+                            System.out.println("NETWORK UNHEALTHY");
+                            System.out.println("===========");
+                            System.out.println("");
 
-                        System.out.println("");
-                        System.out.println("===========");
-                        System.out.println("NETWORK UNHEALTHY");
-                        System.out.println("===========");
-                        System.out.println("");
-
-                        notifyNetworkRouters();
+                            notifyNetworkRouters("UNHEALTHY");
+                        }
                     }
                 }
 
@@ -49,15 +50,11 @@ public class CommunicationAgent extends BaseAgent {
         });
     }
 
-    private void notifyActuatorAgent() {
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.addReceiver(new AID(agentName, AID.ISLOCALNAME));
-        msg.setContent("DDOS_DETECTED");
-        send(msg);
+    private void notifyActuatorAgent(JSONArray data) {
+        sendMessageToAgent("ActuatorAgent", "DDOS_DETECTED", data);
     }
 
-    private void notifyNetworkRouters() {
-        System.out.println("Block network traffic command for network routers");
+    private void notifyNetworkRouters(String blockType) {
+        System.out.println(blockType + ": Block network traffic command for network routers");
     }
-    // Methods to send commands to network hardware
 }
