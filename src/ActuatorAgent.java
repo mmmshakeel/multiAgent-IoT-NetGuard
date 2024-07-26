@@ -9,7 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class ActuatorAgent extends BaseAgent {
-    private String eventStoreServiceUrl = "http://event-store-service:8080/";
+    private String eventStoreServiceUrl = "http://event-store-service:80/";
 //    private String eventStoreServiceUrl = "http://127.0.0.1:8080/";
 
     @Override
